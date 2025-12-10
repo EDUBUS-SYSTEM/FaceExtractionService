@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.git
+.gitignore
+*.md
+test_*.py
+analyze_*.py
+prepare_*.py
+summarize_*.py
+export_*.py
+dataset_metrics.csv
+*.json
+*.bat
+server.py
