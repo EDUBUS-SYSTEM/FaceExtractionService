@@ -11,21 +11,25 @@ from insightface.app import FaceAnalysis
 
 app = Flask(__name__)
 
-# Initialize models
-print("Loading models...")
-print("\n[1/1] Loading InsightFace (buffalo_s)...")
-# buffalo_s = SCRFD (Detection) + MobileFaceNet (Extraction)
-face_app = FaceAnalysis(name='buffalo_s', providers=['CPUExecutionProvider'])
-face_app.prepare(ctx_id=-1, det_size=(640, 640))
-print("✓ Models ready (Standard InsightFace)")
+# Models will be loaded lazily on first request to avoid startup memory spike
+face_app = None
+
+def get_face_app():
+    """Lazy load InsightFace models on first request"""
+    global face_app
+    if face_app is None:
+        print("Loading InsightFace models (first request)...")
+        face_app = FaceAnalysis(name='buffalo_s', providers=['CPUExecutionProvider'])
+        face_app.prepare(ctx_id=-1, det_size=(640, 640))
+        print("✓ Models loaded successfully")
+    return face_app
 
 print("\n" + "="*50)
 print("Face Extraction Service Ready!")
 print("="*50)
 print("Pipeline: Standard InsightFace (buffalo_s)")
-print("Alignment: Built-in 5-point landmark")
-print("Extraction: MobileFaceNet")
-print("Quality Validation: ENABLED (Dataset-based thresholds)")
+print("Model Loading: LAZY (on first request)")
+print("Quality Validation: ENABLED")
 print("="*50 + "\n")
 
 # QUALITY THRESHOLDS  (Based on 3,489 images dataset analysis - 50th percentile)
@@ -90,7 +94,8 @@ def extract_embeddings():
                     }), 400
                 
                 # InsightFace Inference (Detection + Alignment + Extraction)
-                faces = face_app.get(img)
+                app = get_face_app()
+                faces = app.get(img)
                 
                 # VALIDATION 1: Face count
                 if not faces or len(faces) == 0:
