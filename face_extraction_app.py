@@ -118,9 +118,9 @@ def extract_embeddings():
                 confidence = best_face.det_score
                 bbox = best_face.bbox.astype(int)
                 
-                face_width = bbox[2] - bbox[0]
-                face_height = bbox[3] - bbox[1]
-                face_size = min(face_width, face_height)
+                face_width = int(bbox[2] - bbox[0])
+                face_height = int(bbox[3] - bbox[1])
+                face_size = int(min(face_width, face_height))
                 
                 # VALIDATION 2: Face size
                 if face_size < MIN_FACE_SIZE:
@@ -155,7 +155,7 @@ def extract_embeddings():
                 
                 # VALIDATION 4: Blur detection
                 gray = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
-                blur_score = cv2.Laplacian(gray, cv2.CV_64F).var()
+                blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
                 
                 if blur_score < MIN_BLUR:
                     return jsonify({
@@ -167,7 +167,7 @@ def extract_embeddings():
                     }), 400
                 
                 # VALIDATION 5: Brightness
-                brightness = np.mean(face_crop)
+                brightness = float(np.mean(face_crop))
                 
                 if brightness < MIN_BRIGHTNESS:
                     return jsonify({
