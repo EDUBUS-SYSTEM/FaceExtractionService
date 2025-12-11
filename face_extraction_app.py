@@ -32,12 +32,12 @@ print("Model Loading: LAZY (on first request)")
 print("Quality Validation: ENABLED")
 print("="*50 + "\n")
 
-# QUALITY THRESHOLDS  (Based on 3,489 images dataset analysis - 50th percentile)
-MIN_FACE_SIZE = 163      # Minimum face size in pixels
-MIN_BLUR = 194           # Minimum blur score (Laplacian variance)
-MIN_BRIGHTNESS = 105     # Minimum brightness (0-255)
-MAX_BRIGHTNESS = 126     # Maximum brightness (0-255)
-MIN_DET_SCORE = 0.78     # Minimum detection confidence
+# QUALITY THRESHOLDS  (Adjusted for production use - more lenient)
+MIN_FACE_SIZE = 120      # Minimum face size in pixels (reduced from 163)
+MIN_BLUR = 100           # Minimum blur score (Laplacian variance) (reduced from 194)
+MIN_BRIGHTNESS = 80      # Minimum brightness (0-255) (reduced from 105)
+MAX_BRIGHTNESS = 180     # Maximum brightness (0-255) (increased from 126)
+MIN_DET_SCORE = 0.65     # Minimum detection confidence (reduced from 0.78)
 
 @app.route('/health', methods=['GET'])
 def health():
